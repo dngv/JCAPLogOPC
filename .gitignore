@@ -1,0 +1,4 @@
+smtpvars.py
+opcvars.py
+*.xlsx
+*.pyc

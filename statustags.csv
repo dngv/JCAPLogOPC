@@ -5,7 +5,6 @@ Chamber_1K_torr,Word,Tube pressure (1K torr head)
 Enclosure_temp,Short,Enclosure temperature
 Exhaust_H2S_level,Short,Exhaust H2S level
 Exhaust_NH3_level,Short,Exhaust NH3 level
-Fault,Boolean,Interlock
 Heat_abort_time,Short,Heater deviation abort time
 Hood_H2S_level,Short,Hood (floor) H2S level
 Hood_NH3_level,Short,Hood (floor) NH3 level
@@ -20,7 +19,6 @@ Pump_press,Float,Pump inlet pressure
 Reactive_used,Boolean,Reactive gas flowing
 Right_htr_PV,Word,Right zone temperature
 Right_htr_SP,Word,Right zone setpoint
-Run,Boolean,Run in progress
 Run_number,Short,Run number
 Run_step,Short,Current step
 Water_flow,Word,Water flow (gpm)
