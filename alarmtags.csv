@@ -1,0 +1,49 @@
+AC_power_alarm,Boolean,Main AC Power,0
+Cap_man_alarm,Boolean,Capacitance Manometer Malfunction,0
+Center_htr_D_alrm,Boolean,Center Heater Deviation,0
+Center_htr_P_alrm,Boolean,Center Heater Power,0
+Center_htr_T_alrm,Boolean,Center Heater Temperature,0
+Center_htr_TC_flt,Boolean,Center Heater Thermocouple,0
+Cham_press_alarm,Boolean,High Chamber Pressure,0
+Door_open,Boolean,Furnace in Open Position,0
+E_stop_alarm,Boolean,Emergency Stop,0
+Encl_door,Boolean,Enclosure Door Closed,1
+Exhaust_alarm,Boolean,Exhaust Pressure Alarm,0
+Exhaust_OK,Boolean,Exhaust Pressure OK,0
+Gas_1_MFC_alarm,Boolean,O2 Flow Alarm,0
+Gas_2_MFC_alarm,Boolean,N2 Flow Alarm,0
+Gas_3_MFC_alarm,Boolean,N2 Flow Alarm,0
+Gas_4_MFC_alarm,Boolean,N2 Flow Alarm,0
+Gas_5_MFC_alarm,Boolean,CH4 Flow Alarm,0
+Gas_6_MFC_alarm,Boolean,H2 Flow Alarm,0
+Gas_7_MFC_alarm,Boolean,NH3 Flow Alarm,0
+Gas_8_MFC_alarm,Boolean,H2S Flow Alarm,0
+Gas_9_MFC_alarm,Boolean,Ar Flow Alarm,0
+Gas_alarm,Boolean,Enclosure O2 Sensor,0
+Gas_box_N2_alarm,Boolean,N2 Pressure Low,0
+Heater_off_alarm,Boolean,Heater Off,0
+Heater_pwr_alarm,Boolean,Heater Power,0
+High_rate_alarm,Boolean,High Pump Rate,0
+Hood_door,Boolean,Hood Door Closed,1
+Leak_check_fail,Boolean,Leak Check Failed,0
+Left_htr_D_alrm,Boolean,Left Heater Deviation,0
+Left_htr_P_alrm,Boolean,Left Heater Power,0
+Left_htr_T_alrm,Boolean,Left Heater Temperature,0
+Left_htr_TC_flt,Boolean,Left Heater Thermocouple,0
+Master_int_alarm,Boolean,Master Interlock Alarm,0
+MFC_flow_alarm,Boolean,General (any) MFC Flow Alarm,0
+O2_level_alarm,Boolean,O2 High Level Alarm,0
+Pump_alarm,Boolean,Vacuum Pump On,0
+Pump_base_alarm,Boolean,Vacuum Pump Base Pressure,0
+Pump_down_alarm,Boolean,Pump Down Time,0
+Purge_alarm,Boolean,N2 Purge,0
+Red_alarm_test,Boolean,Red Alarm Test,0
+Right_htr_D_alrm,Boolean,Right Heater Deviation,0
+Right_htr_P_alrm,Boolean,Right Heater Power,0
+Right_htr_T_alrm,Boolean,Right Heater Temperature,0
+Right_htr_TC_flt,Boolean,Right Heater Thermocouple,0
+Temp_alarm,Boolean,General Temp Alarm,0
+Temp_dev_alarm,Boolean,General Temp Deviation,0
+Throt_pos_alarm,Boolean,High Throttle Valve Position,0
+Vent_alarm,Boolean,N2 Vent,0
+Vent_sw_alarm,Boolean,Vent Switch,0
