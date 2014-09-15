@@ -1,9 +1,9 @@
-from time import sleep
+from time import sleep, strftime
 from smtpvars import * # gitignore email credentials
 from opcvars import * # gitignore opc server stuff
 import OpenOPC
 import smtplib
-
+import os
 
 def readtagd(csv): # csv format: tag, type, description, normal value (optional)
 	f = open(csv, mode = 'r')
@@ -22,14 +22,16 @@ def readtagd(csv): # csv format: tag, type, description, normal value (optional)
 		d[tag] = vlist
 	return(d)
 
-alarmd = readtagd('alarmtags.csv')
-statsd = readtagd('statustags.csv')
+alarmtags = readtagd('alarmtags.csv')
+stattags = readtagd('statustags.csv')
 faulttag = 'PVI.PLC.Fault'
 steptag = 'PVI.PLC.Run_step'
+sensheader=','.join(['#time', 'H2S_hood', 'H2S_exhaust', 'NH3_hood', 'NH3_exhaust', 'PH3_exhaust', 'O2_enclosure'])
+senslist=['Hood_H2S_level', 'Exhaust_H2S_level', 'Hood_NH3_level', 'Exhaust_NH3_level', 'Hood_PH3_level', 'O2_level']
 
 opc = OpenOPC.client() # DCOM is faster and .close() doesn't reset this binding
 
-def mainloop(cyctime = 1, faultcy = 5, statcy = 10):
+def mainloop(cyctime = 5, faultcy = 5, statcy = 5):
     print 'Alarm loop started.'
     c = 1 # init cycle counter
     run = False # init run in progress
@@ -48,9 +50,10 @@ def mainloop(cyctime = 1, faultcy = 5, statcy = 10):
             if c == lcmm(faultcy, statcy): # lowest common multiple for % x == 0 cases
                 c = 0
             c += 1
-		else:
-			run, ran = runchk(run, ran)
-		sleep(cyctime)
+        else:
+            run, ran = runchk(run, ran)
+            statchk()
+        sleep(cyctime)
 	
 def runchk(run, ran): # loop when system is idle
     opc.connect(opc_server)
@@ -84,21 +87,36 @@ def faultchk(fault, run, mesg): # loop when system is running
     
 def statchk(): # print furnace stats
     opc.connect(opc_server)
-    stats = opc.read(statsd.keys())
+    statsd = {key.split('.')[-1]: val for key, val, stat, t in opc.read(stattags.keys())}
     opc.close()
-    for i in stats:
-        key, val, stat, t = i
-        print statsd[key][1] + ': ' + str(val)
+    for key in statsd.keys():
+        print key + ': ' + str(statsd[key])
+    writesens(statsd)
+
+def writesens(statsd):
+    dailylog = strftime('%Y%m%d') + '.csv'
+    logpath = os.path.join(savedir, dailylog)
+    if (not os.path.exists(logpath)):
+        logfile = open(logpath, mode = 'w')
+        logfile.write(sensheader + '\n')
+        logfile.close()
+    logfile = open(logpath, mode = 'a')
+    sensdata = [strftime('%X')]
+    for key in senslist:
+        sensdata+=['%d' %statsd[key]]
+        #print key + ': ' + str(statsd[key])
+    logfile.write(','.join(sensdata)+'\n')
+    logfile.close()
 
 def readalarms():
     opc.connect(opc_server)
-    alarms = opc.read(alarmd.keys())
+    alarms = opc.read(alarmtags.keys())
     opc.close()
     alarmlist = []
     for i in alarms:
         key, val, stat, t = i
-        if not alarmd[key][2] == val:
-            alarmlist.append(alarmd[key][1])
+        if not alarmtags[key][2] == val:
+            alarmlist.append(alarmtags[key][1])
     alarmtext = '\nThe following alarms are active: \n' + '\n'.join(alarmlist)
     return(alarmtext)
 	
