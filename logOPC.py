@@ -103,7 +103,7 @@ def writesens(statsd):
     logfile = open(logpath, mode = 'a')
     sensdata = [strftime('%X')]
     for key in senslist:
-        sensdata+=['%d' %statsd[key]]
+        sensdata+=['%.1f' %(float(statsd[key])/10)]
         #print key + ': ' + str(statsd[key])
     logfile.write(','.join(sensdata)+'\n')
     logfile.close()
