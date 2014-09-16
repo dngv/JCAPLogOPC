@@ -26,8 +26,14 @@ alarmtags = readtagd('alarmtags.csv')
 stattags = readtagd('statustags.csv')
 faulttag = 'PVI.PLC.Fault'
 steptag = 'PVI.PLC.Run_step'
-sensheader=','.join(['#time', 'H2S_hood', 'H2S_exhaust', 'NH3_hood', 'NH3_exhaust', 'PH3_exhaust', 'O2_enclosure'])
-senslist=['Hood_H2S_level', 'Exhaust_H2S_level', 'Hood_NH3_level', 'Exhaust_NH3_level', 'Hood_PH3_level', 'O2_level']
+sensheader = ','.join(['#time', 'H2S_hood', 'H2S_exhaust', 'NH3_hood', 'NH3_exhaust', 'PH3_exhaust', 'O2_enclosure'])
+#senslist=['Hood_H2S_level', 'Exhaust_H2S_level', 'Hood_NH3_level', 'Exhaust_NH3_level', 'Hood_PH3_level', 'O2_level']
+senslist = [('Hood_H2S_level', '%d', 1), \
+            ('Exhaust_H2S_level', '%d', 1), \
+            ('Hood_NH3_level', '%d', 1), \
+            ('Exhaust_NH3_level', '%d', 1), \
+            ('Hood_PH3_level', '%d', 1), \
+            ('O2_level', '%.1f', 0.1)]
 
 opc = OpenOPC.client() # DCOM is faster and .close() doesn't reset this binding
 
@@ -102,8 +108,8 @@ def writesens(statsd):
         logfile.close()
     logfile = open(logpath, mode = 'a')
     sensdata = [strftime('%X')]
-    for key in senslist:
-        sensdata+=['%.1f' %(float(statsd[key])/10)]
+    for key, fmt, scale in senslist:
+        sensdata+=[fmt %(float(statsd[key])*scale)]
         #print key + ': ' + str(statsd[key])
     logfile.write(','.join(sensdata)+'\n')
     logfile.close()
