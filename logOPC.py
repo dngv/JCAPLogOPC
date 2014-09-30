@@ -4,6 +4,7 @@ from opcvars import * # gitignore opc server stuff
 import OpenOPC
 import smtplib
 import os
+import gc
 
 def readtagd(csv): # csv format: tag, type, description, normal value (optional)
 	f = open(csv, mode = 'r')
@@ -26,14 +27,24 @@ alarmtags = readtagd('alarmtags.csv')
 stattags = readtagd('statustags.csv')
 faulttag = 'PVI.PLC.Fault'
 steptag = 'PVI.PLC.Run_step'
-sensheader = ','.join(['#time', 'H2S_hood', 'H2S_exhaust', 'NH3_hood', 'NH3_exhaust', 'PH3_exhaust', 'O2_enclosure'])
+sensheader = ','.join(['#time', 'H2S_hood', 'H2S_exhaust', 'NH3_hood', 'NH3_exhaust', 'PH3_exhaust', 'O2_enclosure', 'Chamber_10_torr', 'Chamber_1K_torr', 'Left_temp', 'Left_sp', 'Center_temp', 'Center_sp', 'Right_temp', 'Right_sp', 'Run_no', 'Step'])
 #senslist=['Hood_H2S_level', 'Exhaust_H2S_level', 'Hood_NH3_level', 'Exhaust_NH3_level', 'Hood_PH3_level', 'O2_level']
 senslist = [('Hood_H2S_level', '%d', 1), \
             ('Exhaust_H2S_level', '%d', 1), \
             ('Hood_NH3_level', '%d', 1), \
             ('Exhaust_NH3_level', '%d', 1), \
             ('Hood_PH3_level', '%d', 1), \
-            ('O2_level', '%.1f', 0.1)]
+            ('O2_level', '%.1f', 0.1), \
+            ('Chamber_10_torr', '%.4f', (10.0/65535)), \
+            ('Chamber_1K_torr', '%.1f', (1000.0/65535)), \
+            ('Left_heater_PV', '%.1f', 0.1), \
+            ('Left_heater_SP', '%.1f', 0.1), \
+            ('Center_htr_PV', '%.1f', 0.1), \
+            ('Center_htr_SP', '%.1f', 0.1), \
+            ('Right_htr_PV', '%.1f', 0.1), \
+            ('Right_htr_SP', '%.1f', 0.1), \
+            ('Run_number', '%d', 1), \
+            ('Run_step', '%d', 1)]
 
 opc = OpenOPC.client() # DCOM is faster and .close() doesn't reset this binding
 
@@ -45,20 +56,22 @@ def mainloop(cyctime = 5, faultcy = 5, statcy = 5):
     fault = False # init global fault
     mesg = False # init alert sent
     while True:
-        if run:
-            if not ran:
-                ran = True
-                print 'Run started.'
-            if c % faultcy == 0:
-                fault, run, mesg = faultchk(fault, run, mesg)
-            if c % statcy == 0:
-                statchk()
-            if c == lcmm(faultcy, statcy): # lowest common multiple for % x == 0 cases
-                c = 0
-            c += 1
-        else:
-            run, ran = runchk(run, ran)
-            statchk()
+#        if run:
+#            if not ran:
+#                ran = True
+#                print 'Run started.'
+#            if c % faultcy == 0:
+#                fault, run, mesg = faultchk(fault, run, mesg)
+#            if c % statcy == 0:
+#                statchk()
+#            if c == lcmm(faultcy, statcy): # lowest common multiple for % x == 0 cases
+#                c = 0
+#            c += 1
+#        else:
+#            run, ran = runchk(run, ran)
+#            statchk()
+        statchk()
+        gc.collect()
         sleep(cyctime)
 	
 def runchk(run, ran): # loop when system is idle
