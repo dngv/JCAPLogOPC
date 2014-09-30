@@ -2,3 +2,4 @@ smtpvars.py
 opcvars.py
 *.xlsx
 *.pyc
+old*.py

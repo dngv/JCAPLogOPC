@@ -23,3 +23,4 @@ Run_number,Short,Run number
 Run_step,Short,Current step
 Water_flow,Word,Water flow (gpm)
 Water_temp,Word,Water temperature
+Fault,Boolean,System interlocked
