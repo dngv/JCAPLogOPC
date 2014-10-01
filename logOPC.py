@@ -74,9 +74,9 @@ def mainloop(cyctime = 5):
 
     def statchk(): # print furnace stats
         statsd = {key.split('.')[-1]: val for key, val, stat, t in opc.read(stattags.keys())}
-        for key in statsd.keys():
-            print key + ': ' + str(statsd[key])
-        print '\n'
+#        for key in statsd.keys():
+#            print key + ': ' + str(statsd[key])
+#        print '\n'
         writesens(statsd)
         return(statsd)
 
@@ -90,7 +90,8 @@ def mainloop(cyctime = 5):
         sensdata = [strftime('%X')]
         for key, fmt, scale in senslist:
             sensdata+=[fmt %(float(statsd[key])*scale)]
-        if (len(sensdata)==len(senslist)): # only write log if we have all data fields
+#        print '\n'
+        if (len(sensdata)==(len(senslist)+1)): # only write log if we have all data fields
             logfile = open(logpath, mode = 'a')
             logfile.write(','.join(sensdata)+'\n')
             logfile.close()
