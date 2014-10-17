@@ -68,10 +68,14 @@ def mainloop(cyctime = 5):
     lastrun = False # previous cycle run value
     lastalarm = False # previous cycle alarm value
     
-    opc = OpenOPC.open_client(gateway_host)
-    print 'Alarm loop started.'
-    opc.connect(opc_server, opc_host)
+    def printmsg(msg):
+        currenttime = strftime('%Y%m%d %H:%M:%S')
+        print(currenttime + ' - ' + msg)
 
+    opc = OpenOPC.open_client(gateway_host)
+    printmsg('Alarm loop started.')
+    opc.connect(opc_server, opc_host)
+    
     def statchk(): # print furnace stats
         statsd = {key.split('.')[-1]: val for key, val, stat, t in opc.read(stattags.keys())}
 #        for key in statsd.keys():
@@ -84,17 +88,25 @@ def mainloop(cyctime = 5):
         dailylog = strftime('%Y%m%d') + '.csv'
         logpath = os.path.join(savedir, dailylog)
         if (not os.path.exists(logpath)):
-            logfile = open(logpath, mode = 'w')
-            logfile.write(sensheader + '\n')
-            logfile.close()
+            try:
+                logfile = open(logpath, mode = 'w')
+                logfile.write(sensheader + '\n')
+                logfile.close()
+            except:
+                printmsg('Unable to write to log file.')
+                return()
         sensdata = [strftime('%X')]
         for key, fmt, scale in senslist:
             sensdata+=[fmt %(float(statsd[key])*scale)]
 #        print '\n'
         if (len(sensdata)==(len(senslist)+1)): # only write log if we have all data fields
-            logfile = open(logpath, mode = 'a')
-            logfile.write(','.join(sensdata)+'\n')
-            logfile.close()
+            try:
+                logfile = open(logpath, mode = 'a')
+                logfile.write(','.join(sensdata)+'\n')
+                logfile.close()
+            except:
+                printmsg('Unable to write to log file.')
+                pass
 
     def readalarms():
         alarms = opc.read(alarmtags.keys())
@@ -121,28 +133,44 @@ def mainloop(cyctime = 5):
         run=d['Run_step']>0
         if(run==True and lastrun==False):
             # send message run started
-            mailalert(subject='Run #' + str(d['Run_number']) + ' has started.', body='')
-            print('Start message sent.')
+            try:
+                mailalert(subject='Run #' + str(d['Run_number']) + ' has started.', body='')
+                printmsg('Start message sent.')
+            except:
+                printmsg('Unable to send start message.')
+                pass
             return(run)
 
         if(run==False and lastrun==True):
             # send message run ended
-            mailalert(subject='Run #' + str(d['Run_number']) + ' has finished.', body='')
-            print('Stop message sent.')
+            try:
+                mailalert(subject='Run #' + str(d['Run_number']) + ' has finished.', body='')
+                printmsg('Stop message sent.')
+            except:
+                printmsg('Unable to send end message.')
+                pass
             return(run)
         
     def alarmchk(d):
         alarm=bool(d['Fault'])
         if(alarm==True and lastalarm==False):
             # send message alarm triggered
-            mailalert()
-            print('Alarm message sent.')
+            try:
+                mailalert()
+                printmsg('Alarm message sent.')
+            except:
+                printmsg('Unable to send alarm message.')
+                pass
             return(alarm)
             
         if(alarm==False and lastalarm==True):
             # send message alarm cleared
-            mailalert(subject='Furnace interlock cleared.')
-            print('Alarm cleared message sent.')
+            try:
+                mailalert(subject='Furnace interlock cleared.')
+                printmsg('Alarm cleared message sent.')
+            except:
+                printmsg('Unable to send clear message.')
+                pass
             return(alarm)
 
     try:
@@ -152,11 +180,13 @@ def mainloop(cyctime = 5):
                 lastrun=runchk(d)
                 lastalarm=alarmchk(d)
             except:
+                #printmsg('Last run = ' str(lastrun))
+                #printmsg('Last alarm = ' str(lastalarm))
                 pass
             gc.collect()
             sleep(cyctime)
     except KeyboardInterrupt:
-        print 'Ctrl-C pressed. Exiting loop.'
+        printmsg('Ctrl-C pressed. Exiting loop.')
 
     opc.close()
 
