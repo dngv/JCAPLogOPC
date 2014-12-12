@@ -139,8 +139,6 @@ def mainloop(cyctime = 5):
             except:
                 printmsg('Unable to send start message.')
                 pass
-            return(run)
-
         if(run==False and lastrun==True):
             # send message run ended
             try:
@@ -149,7 +147,7 @@ def mainloop(cyctime = 5):
             except:
                 printmsg('Unable to send end message.')
                 pass
-            return(run)
+        return(run)
         
     def alarmchk(d):
         alarm=bool(d['Fault'])
@@ -161,8 +159,6 @@ def mainloop(cyctime = 5):
             except:
                 printmsg('Unable to send alarm message.')
                 pass
-            return(alarm)
-            
         if(alarm==False and lastalarm==True):
             # send message alarm cleared
             try:
@@ -171,7 +167,7 @@ def mainloop(cyctime = 5):
             except:
                 printmsg('Unable to send clear message.')
                 pass
-            return(alarm)
+        return(alarm)
 
     try:
         while True:
@@ -180,8 +176,7 @@ def mainloop(cyctime = 5):
                 lastrun=runchk(d)
                 lastalarm=alarmchk(d)
             except:
-                #printmsg('Last run = ' str(lastrun))
-                #printmsg('Last alarm = ' str(lastalarm))
+                printmsg('Could not query OPC sever.')
                 pass
             gc.collect()
             sleep(cyctime)
