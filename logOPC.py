@@ -142,7 +142,7 @@ def mainloop(cyctime = 5):
         if(run==False and lastrun==True):
             # send message run ended
             try:
-                mailalert(subject='Run #' + str(d['Run_number']) + ' has finished.', body='')
+                mailalert(subject='Run #' + str(d['Run_number']-1) + ' has finished.', body='')
                 printmsg('Stop message sent.')
             except:
                 printmsg('Unable to send end message.')
