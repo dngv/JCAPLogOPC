@@ -2,6 +2,7 @@ import OpenOPC
 import smtplib
 import os
 import gc
+import subprocess
 
 from time import sleep, strftime
 from smtpvars import to, mailuser, mailpass, subject, smtphost # gitignore email credentials
@@ -71,7 +72,23 @@ def mainloop(cyctime = 5):
     def printmsg(msg):
         currenttime = strftime('%Y%m%d %H:%M:%S')
         print(currenttime + ' - ' + msg)
+    
+    def getsrv():
+        srv=[i.strip() for i in subprocess.check_output(['net','start']).split('\r\n')]
+        return(srv)
 
+    opcsrvname = 'OpenOPC Gateway Service'
+    
+    # check running services
+    def checksrv():
+        wsrv = getsrv()
+        while opcsrvname not in wsrv:
+            printmsg('OpenOPC gateway service not running. Attempting to start.')
+            subprocess.call(['net','stop','zzzOpenOPCService'])
+            subprocess.call(['net','start','zzzOpenOPCService'])
+            wsrv = getsrv()
+            
+    checksrv()
     opc = OpenOPC.open_client(gateway_host)
     printmsg('Alarm loop started.')
     opc.connect(opc_server, opc_host)
@@ -176,7 +193,9 @@ def mainloop(cyctime = 5):
                 lastrun=runchk(d)
                 lastalarm=alarmchk(d)
             except:
-                printmsg('Could not query OPC sever.')
+                checksrv()
+                opc = OpenOPC.open_client(gateway_host)
+                opc.connect(opc_server, opc_host)
                 pass
             gc.collect()
             sleep(cyctime)
@@ -184,5 +203,3 @@ def mainloop(cyctime = 5):
         printmsg('Ctrl-C pressed. Exiting loop.')
 
     opc.close()
-
-	
