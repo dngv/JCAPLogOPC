@@ -3,17 +3,17 @@ Center_htr_SP,Word,Center zone setpoint
 Chamber_10_torr,Word,Tube pressure (10 torr head)
 Chamber_1K_torr,Word,Tube pressure (1K torr head)
 Enclosure_temp,Short,Enclosure temperature
-Exhaust_H2S_level,Short,Exhaust H2S level
-Exhaust_NH3_level,Short,Exhaust NH3 level
+Exhaust_H2S_level,Short,Exhaust H2S level (ppm)
+Exhaust_NH3_level,Short,Exhaust NH3 level (ppm)
 Heat_abort_time,Short,Heater deviation abort time
-Hood_H2S_level,Short,Hood (floor) H2S level
-Hood_NH3_level,Short,Hood (floor) NH3 level
-Hood_PH3_level,Short,Hood (floor) PH3 level
+Hood_H2S_level,Short,Hood floor H2S level (ppm) O
+Hood_NH3_level,Short,Hood floor NH3 level (ppm) O
+Hood_PH3_level,Short,Hood floor PH3 level (ppm) O
 Left_heater_PV,Word,Left zone temperature
 Left_heater_SP,Word,Left zone setpoint
-Manifold_10_torr,Word,Manifold pressure (10 torr)
+Manifold_10_torr,Word,Manifold pressure (10 torr) O
 Motor_position,Long,Motor position in counts
-O2_level,Short,Enclosure O2 level
+O2_level,Short,Enclosure O2 level (%)
 O2_used,Boolean,Oxygen flowing
 Pump_press,Float,Pump inlet pressure
 Reactive_used,Boolean,Reactive gas flowing
