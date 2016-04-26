@@ -68,12 +68,12 @@ senslist = [('Hood_H2S_level', '%.1f', 1, 0), \
             ('Chamber_10_torr', '%.4f', (10.0/65535), 0), \
             ('Chamber_1K_torr', '%.1f', (1000.0/65535), 0), \
             ('Left_heater_PV', '%.1f', 0.1, 0), \
-            ('Left_heater_SP', '%.1f', 0.1, 0), \
+            #('Left_heater_SP', '%.1f', 0.1, 0), \
             ('Center_htr_PV', '%.1f', 0.1, 0), \
-            ('Center_htr_SP', '%.1f', 0.1, 0), \
+            #('Center_htr_SP', '%.1f', 0.1, 0), \
             ('Right_htr_PV', '%.1f', 0.1, 0), \
-            ('Right_htr_SP', '%.1f', 0.1, 0), \
-            ('Run_number', '%d', 1, 0), \
+            #('Right_htr_SP', '%.1f', 0.1, 0), \
+            #('Run_number', '%d', 1, 0), \
             ('Run_step', '%d', 1, 0), \
 			('Manifold_10_torr', '%.3f', (10.0/65535), 0), \
 			('Pump_press', '%.4f', 1, 0)]
@@ -95,7 +95,7 @@ def mainloop(rectime = 5):
         global ab
         currenttime = strftime('%Y%m%d %H:%M:%S', localtime())
         #print(currenttime + ' - ' + msg)
-        if len(ab) > ablength:
+        if len(ab) == ablength:
             ab = ab[:-1]
         ab = [currenttime + ' - ' + msg] + ab
 
@@ -149,16 +149,6 @@ def mainloop(rectime = 5):
             except:
                 printmsg('Unable to write to log file.')
                 pass
-
-    # def readalarms():
-    #     alarms = opc.read(alarmkeys)
-    #     alarmtxtlist = []
-    #     for i in alarms:
-    #         key, val, stat, t = i
-    #         if not alarmtags[key][2] == val:
-    #             alarmtxtlist.append(alarmtags[key][1])
-    #     alarmtext = '\nThe following alarms are active: \n' + '\n'.join(alarmtxtlist)
-    #     return(alarmtext)
 
     def mailalert(body, to = to, subject = subject):
         smtpserv = smtplib.SMTP(smtphost, 587)
@@ -248,10 +238,9 @@ def mainloop(rectime = 5):
                 rd, ed = statchk()
                 lastrun=runchk(rd)
                 lastalarm=alarmchk(rd)
-                #b0 = [strftime('%X')] + [ed[k] for k in [key for key, fmt, scale, offset in senslist]]
                 if cycles % rectime == 0:
                     writesens(ed)
-                if cycles == 300:
+                if cycles == max([int(c) for c in bcycles]):
                     cycles = 1
                 printstats(ed)
                 cycles = cycles + 1
