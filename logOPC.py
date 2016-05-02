@@ -84,7 +84,6 @@ def mainloop(rectime = 5):
     lastalarm = False # previous cycle alarm value
     safealarmvals = [alarmtags[key][2] for key in alarmkeys]
     lastalarmvals = safealarmvals
-
     cycles = 1
     ncols = len(senslist) + 1 # add 1 for timestamp
     b = {}
@@ -187,7 +186,6 @@ def mainloop(rectime = 5):
         alarmd = {}
         alarmvals = []
         alarmtxtlist = []
-        global lastalarmvals
         for i in alarms:
             key, val, stat, t = i
             alarmd[key] = val
@@ -196,7 +194,6 @@ def mainloop(rectime = 5):
         for key in alarmkeys:
             alarmvals += [alarmd[key]]
         alarmtext = '\nThe following alarms are active: \n' + '\n'.join(alarmtxtlist)
-
         if((alarm==True and lastalarm==False) or ((alarmvals != lastalarmvals) and (alarmvals != safealarmvals))):
             # send message alarm triggered
             try:
@@ -213,8 +210,7 @@ def mainloop(rectime = 5):
             except:
                 printmsg('Unable to send clear message.')
                 pass
-        lastalarmvals = alarmvals
-        return(alarm)
+        return(alarm, alarmvals)
 
     def printstats(eud):
         t = PrettyTable(['Time'] + [key for key, fmt, scale, offset in senslist])
@@ -237,7 +233,7 @@ def mainloop(rectime = 5):
             try:
                 rd, ed = statchk()
                 lastrun=runchk(rd)
-                lastalarm=alarmchk(rd)
+                lastalarm, lastalarmvals=alarmchk(rd)
                 if cycles % rectime == 0:
                     writesens(ed)
                 if cycles == max([int(c) for c in bcycles]):
